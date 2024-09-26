@@ -1,6 +1,7 @@
 package com.csroot.AfterWork.company;
 
 import com.csroot.AfterWork.job.Job;
+import com.csroot.AfterWork.review.Review;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -16,6 +17,18 @@ public class Company {
     @JsonIgnore
     @OneToMany(mappedBy = "company")
     private List<Job> allJobs;
+    @JsonIgnore
+    @OneToMany(mappedBy = "company")
+    private List<Review> allReviews;
+
+    public List<Review> getAllReviews() {
+        return allReviews;
+    }
+
+    public void setAllReviews(List<Review> allReviews) {
+        this.allReviews = allReviews;
+    }
+
     public Company(){
 
     }
