@@ -2,6 +2,7 @@ package com.csroot.AfterWork.job;
 
 
 import com.csroot.AfterWork.company.Company;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,20 +16,12 @@ public class Job {
     private String maxSalary;
     private String minSalary;
     private String location;
+    @JsonIgnore
     @ManyToOne
     private Company company;
     public Job(){
 
     }
-    public Job(Long id, String title, String description, String maxSalary, String minSalary, String location) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.maxSalary = maxSalary;
-        this.minSalary = minSalary;
-        this.location = location;
-    }
-
     public Company getCompany() {
         return company;
     }

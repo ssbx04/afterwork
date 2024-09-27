@@ -42,7 +42,6 @@ public class ReviewServiceImpl implements ReviewService {
                 .findFirst()
                 .orElse(null);
     }
-
     @Override
     public boolean updateReview(Long companyId, Long reviewId, Review updatedReview) {
         Optional<Review> optionalReview = reviewRepository
