@@ -24,20 +24,32 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void createReview(Long companyId,Review review) {
+    public boolean createReview(Long companyId,Review review) {
         Company company = companyService.getCompanyById(companyId);
-        review.setCompany(company);
-        reviewRepository.save(review);
+        if(company != null){
+            review.setCompany(company);
+            reviewRepository.save(review);
+            return  true;
+        }
+        return  false;
+    }
+    @Override
+    public Review getReview(Long companyId, Long reviewId) {
+        List<Review> reviews = reviewRepository.findByCompanyId(companyId);
+        return reviews
+                .stream()
+                .filter(review -> review.getId().equals(reviewId))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
-    public Review getReview(Long id) {
-        return reviewRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public boolean updateReview(Long id, Review updatedReview) {
-        Optional<Review> optionalReview = reviewRepository.findById(id);
+    public boolean updateReview(Long companyId, Long reviewId, Review updatedReview) {
+        Optional<Review> optionalReview = reviewRepository
+                .findByCompanyId(companyId)
+                .stream()
+                .filter(review -> review.getId().equals(reviewId))
+                .findFirst();
         if(optionalReview.isPresent()){
             Review review = optionalReview.get();
             review.setTitle(updatedReview.getTitle());
@@ -48,14 +60,19 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return false;
     }
-
     @Override
-    public boolean deleteReview(Long id) {
-        try {
-            reviewRepository.deleteById(id);
+    public boolean deleteReview(Long companyId, Long reviewId) {
+        if(companyService.getCompanyById(companyId) != null
+                && reviewRepository.existsById(reviewId)){
+            if (reviewRepository.findById(reviewId).isPresent()){
+                Review review = reviewRepository.findById(reviewId).get();
+                Company company = review.getCompany();
+                company.getAllReviews().remove(review);
+                review.setCompany(null);
+                companyService.updateCompanyById(companyId,company);
+            }
             return  true;
-        }catch (Exception e){
-            return false;
         }
+        return  false;
     }
 }
