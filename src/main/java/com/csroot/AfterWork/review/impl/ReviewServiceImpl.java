@@ -1,5 +1,7 @@
 package com.csroot.AfterWork.review.impl;
 
+import com.csroot.AfterWork.company.Company;
+import com.csroot.AfterWork.company.CompanyService;
 import com.csroot.AfterWork.review.Review;
 import com.csroot.AfterWork.review.ReviewRepository;
 import com.csroot.AfterWork.review.ReviewService;
@@ -11,8 +13,10 @@ import java.util.Optional;
 @Service
 public class ReviewServiceImpl implements ReviewService {
     final ReviewRepository reviewRepository;
-    public ReviewServiceImpl(ReviewRepository reviewRepository){
+    final CompanyService companyService;
+    public ReviewServiceImpl(CompanyService companyService, ReviewRepository reviewRepository){
         this.reviewRepository = reviewRepository;
+        this.companyService = companyService;
     }
     @Override
     public List<Review> findAllReviews(Long id) {
@@ -20,7 +24,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void createReview(Review review) {
+    public void createReview(Long companyId,Review review) {
+        Company company = companyService.getCompanyById(companyId);
+        review.setCompany(company);
         reviewRepository.save(review);
     }
 
